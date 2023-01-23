@@ -1,4 +1,5 @@
-
+import yfinance as yf
+import datetime as dt
 from alpha_vantage.timeseries import TimeSeries
 import pandas as pd
 
@@ -19,3 +20,6 @@ print(data)
 # ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
 
 
+stock_data = yf.download(stock_symbol, start=dt.date.today() - dt.timedelta(days=3), end=dt.date.today(), interval='1d')
+pred = stock_data['Adj Close'][0]
+print(pred)
