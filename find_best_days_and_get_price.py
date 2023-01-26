@@ -1,12 +1,15 @@
+import datetime
 import difflib
 
 import yfinance as yf
 import datetime as dt
 from sklearn.metrics import mean_absolute_error as mae
-
+stocks = ['AAPL', 'TSLA', 'MSFT', 'GLD']
 # Define the stock symbol and the date range for the data
 from matplotlib import pyplot as plt
 preicted_price_with_days = {}
+preicted_price_with_days2 = {}
+
 def predict_process(start_date, end_date, stock_symbol):
     stock_data = yf.download(stock_symbol, start=start_date, end=end_date, interval='1d')
 
@@ -38,14 +41,15 @@ def predict_process(start_date, end_date, stock_symbol):
     next_day = model.predict(np.array([last_day]))
     next_day = scaler.inverse_transform(next_day)
     preicted_price_with_days[days] = next_day[0][0]
-    return print("Predicted price for next day: ", next_day[0][0])
-
-for i in range(20):
-    days = 10 + 10 * i
-    end_date = dt.date.today() - dt.timedelta(days=3)
-    start_date = end_date - dt.timedelta(days=days)
-    stock_symbol = "TSLA"
-    predict_process(start_date, end_date, stock_symbol)
+    return (f"Predicted price for {stock_symbol} next day: ", next_day[0][0])
+s = {}
+for j in stocks:
+    stock_symbol = j
+    for i in range(20):
+        days = 10 + 10 * i
+        end_date = dt.date.today() - dt.timedelta(days=3)
+        start_date = end_date - dt.timedelta(days=days)
+        predict_process(start_date, end_date, stock_symbol)
 
 # for i in range(20):
 #     days = 10 + 10 * i
@@ -146,20 +150,38 @@ for i in range(20):
 #     print("Predicted price for next day: ", next_day[0][0])
 #     preicted_price_with_days[days] = next_day[0][0]
 
-stock = yf.download(stock_symbol, start=dt.date.today() - dt.timedelta(days=3), end=dt.date.today(), interval='1d')
-pred = round(stock['Adj Close'][0], 2)
-print('!!!!!!', pred)
-min = 100
-for key, value in preicted_price_with_days.items():
-    print(round((float(pred)-float(value))/float(pred)*100, 2), key)
-    if round((float(pred)-float(value))/float(pred)*100, 2) < min:
-        min = round((float(pred)-float(value))/float(pred)*100, 2)
-        v = value
-        d = key
+    stock = yf.download(stock_symbol, start=dt.date.today() - dt.timedelta(days=3), end=dt.date.today(), interval='1d')
+    pred = round(stock['Adj Close'][0], 2)
+    print('!!!!!!', pred)
+    min = 100
+    for key, value in preicted_price_with_days.items():
+        print(round((float(pred)-float(value))/float(pred)*100, 2), key)
+        if round((float(pred)-float(value))/float(pred)*100, 2) < min:
+            min = round((float(pred)-float(value))/float(pred)*100, 2)
+            v = value
+            d = key
 
-print(min, d)
+    print(min, d, value, pred, stock_symbol)
+    s[stock_symbol] = d
+l = []
+for key, value in s.items():
+    end_date = dt.date.today()
+    start_date = end_date - dt.timedelta(days=value)
+    stock_symbol = key
+    s = predict_process(start_date, end_date, stock_symbol)
+    l.append(s)
+print(l)
+with open('predict.txt', 'w') as file:
+    file.write(f'{datetime.datetime.now()}-----{l}')
 
-end_date = dt.date.today()
-start_date = end_date - dt.timedelta(days=d)
-stock_symbol = "TSLA"
-predict_process(start_date, end_date, stock_symbol)
+
+# dont loose
+from alpha_vantage.timeseries import TimeSeries
+import pandas as pd
+stock_symbol = "GLD"
+api_key = "L58WI1HAC6T3XEKP"
+outputsize = 'full'
+interval = '60min'
+ts = TimeSeries(key=api_key, output_format='pandas')
+data, meta_data = ts.get_intraday(symbol=stock_symbol, interval=interval)
+# print(data)
