@@ -170,7 +170,7 @@ for key, value in s.items():
     stock_symbol = key
     s = predict_process(start_date, end_date, stock_symbol)
     l.append(s)
-print(l)
+print([i for i in l], '\n')
 with open('predict.txt', 'w') as file:
     file.write(f'{datetime.datetime.now()}-----{l}')
 
