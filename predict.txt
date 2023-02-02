@@ -1,1 +1,1 @@
-2023-01-26 20:03:10.855336-----[('Predicted price for AAPL next day: ', 140.88579), ('Predicted price for TSLA next day: ', 143.86334), ('Predicted price for MSFT next day: ', 239.89612), ('Predicted price for GLD next day: ', 182.66777)]
+2023-01-28 15:52:00.688544-----[('Predicted price for AAPL next day: ', 148.26198), ('Predicted price for TSLA next day: ', 179.47716), ('Predicted price for MSFT next day: ', 247.605), ('Predicted price for GLD next day: ', 179.39394)]
